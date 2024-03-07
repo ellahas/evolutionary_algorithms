@@ -55,4 +55,13 @@ def order_crossover(p1, p2):
     return c1, c2
 
 
+def mutation(child):
+    """Mutate a child by swapping two random positions."""
+    positions = np.random.choice(len(child), size=2)  # allows the same position twice, so there is some chance of no mutation as well
+    mutated_child = child.copy()
+    mutated_child[positions[0]] = child[positions[1]]
+    mutated_child[positions[1]] = child[positions[0]]
+    return mutated_child
+
+
 coords = read_coords(file_reader)
