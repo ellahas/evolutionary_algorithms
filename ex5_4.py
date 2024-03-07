@@ -64,4 +64,30 @@ def mutation(child):
     return mutated_child
 
 
+def tournament_selection(generation, coords, K):
+    parents = np.random.choice(generation.shape[0], K)
+    best_p = None
+    best_f = 0
+    for p in parents:
+        f = fitness(generation[p, :], coords)
+        if f > best_f:
+            best_f = f
+            best_p = generation[p, :]
+    return best_p
+
+
+def generation_step(generation, coords, K=2):
+    """Generate a new generation. Assumes generations of even number of individuals."""
+    children = np.zeros(generation.shape, int)
+    for i in range(generation.shape[0]//2):
+        p1 = tournament_selection(generation, coords, K)
+        p2 = tournament_selection(generation, coords, K)
+        c1, c2 = order_crossover(p1, p2)
+        c1 = mutation(c1)
+        c2 = mutation(c2)
+        children[i, :] = c1
+        children[i+generation.shape[0]//2, :] = c2
+    return children
+
+
 coords = read_coords(file_reader)
