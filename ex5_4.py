@@ -12,5 +12,10 @@ def read_coords(file_reader):
     return coords
 
 
+def distance(coords1, coords2):
+    """Calculate the eulerian distance between two coordinate pairs."""
+    return np.sqrt((coords1[0] - coords2[0])**2 + (coords1[1] - coords2[1])**2)
+
+
 coords = read_coords(file_reader)
 print(coords)
