@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 tsp_file = "file-tsp.txt"
 file_reader = open(tsp_file, "r")
@@ -93,11 +95,38 @@ def generation_step(generation, coords, K=2):
 
 def random_population(n_cities, N):
     """Generate a population of N random permutations of range(n_cities)"""
-    generation = np.zeros((N, n_cities))
+    generation = np.zeros((N, n_cities), int)
     for n in range(N):
         generation[n, :] = np.random.permutation(n_cities)
     return generation
 
 
+def get_all_fitnesses(generation, coords):
+    all_fitnesses = np.zeros(len(generation))
+    for i in range(len(generation)):
+        all_fitnesses[i] = fitness(generation[i, :], coords)
+    return all_fitnesses
+
+
+def evolutionary_loop(coords, steps, N=50, K=2):
+    generation = random_population(coords.shape[0], N)
+    best_fitnesses = np.zeros(steps+1)
+    mean_fitnesses = np.zeros(steps+1)
+    all_fitnesses = get_all_fitnesses(generation, coords)
+    best_fitnesses[0] = np.max(all_fitnesses)
+    mean_fitnesses[0] = np.mean(all_fitnesses)
+    for s in tqdm(range(steps)):
+        generation = generation_step(generation, coords, K)
+        all_fitnesses = get_all_fitnesses(generation, coords)
+        best_fitnesses[s+1] = np.max(all_fitnesses)
+        mean_fitnesses[s+1] = np.mean(all_fitnesses)
+    return best_fitnesses, mean_fitnesses, generation
+
+
 coords = read_coords(file_reader)
-start_generation = random_population(coords.shape[0], 50)
+best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500)
+fig = plt.figure()
+plt.plot(best_fitnesses)
+plt.plot(mean_fitnesses)
+plt.savefig("fitness.png")
+plt.show()
