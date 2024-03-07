@@ -65,6 +65,7 @@ def mutation(child):
 
 
 def tournament_selection(generation, coords, K):
+    """Select two sets of K parents, best of each group procreates together."""
     parents = np.random.choice(generation.shape[0], K)
     best_p = None
     best_f = 0
@@ -90,4 +91,13 @@ def generation_step(generation, coords, K=2):
     return children
 
 
+def random_population(n_cities, N):
+    """Generate a population of N random permutations of range(n_cities)"""
+    generation = np.zeros((N, n_cities))
+    for n in range(N):
+        generation[n, :] = np.random.permutation(n_cities)
+    return generation
+
+
 coords = read_coords(file_reader)
+start_generation = random_population(coords.shape[0], 50)
