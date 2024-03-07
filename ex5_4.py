@@ -123,10 +123,30 @@ def evolutionary_loop(coords, steps, N=50, K=2):
     return best_fitnesses, mean_fitnesses, generation
 
 
+def best_solution(generation, coords):
+    all_fitnesses = get_all_fitnesses(generation, coords)
+    i = np.argmax(all_fitnesses)
+    solution = generation[i, :]
+    return solution
+
+
+def plot_solution(solution, coords):
+    fig = plt.figure()
+    coords_path = coords[solution, :]
+    plt.scatter(coords[:, 0], coords[:, 1])
+    plt.plot(coords_path[:, 0], coords_path[:, 1])
+    return fig
+
+
 coords = read_coords(file_reader)
 best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500)
 fig = plt.figure()
 plt.plot(best_fitnesses)
 plt.plot(mean_fitnesses)
 plt.savefig("fitness.png")
+plt.show()
+
+solution = best_solution(generation, coords)
+fig = plot_solution(solution, coords)
+plt.savefig("solution.png")
 plt.show()
