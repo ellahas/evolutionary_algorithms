@@ -5,6 +5,7 @@ file_reader = open(tsp_file, "r")
 
 
 def read_coords(file_reader):
+    """Read the coordinates of the cities given in the file."""
     lines = file_reader.readlines()
     coords = np.zeros((len(lines), 2))
     for i, line in enumerate(lines):
