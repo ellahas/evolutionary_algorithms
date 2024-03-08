@@ -112,7 +112,7 @@ def evolutionary_loop(coords, steps, N=200, K=2, local_search=False):
     generation = random_population(coords.shape[0], N)
     if local_search:
         for i in range(generation.shape[0]):
-            generation[i, :] = two_opt_search(generation[i, :])
+            generation[i, :] = two_opt_search(generation[i, :], coords)
     best_fitnesses = np.zeros(steps+1)
     mean_fitnesses = np.zeros(steps+1)
     all_fitnesses = get_all_fitnesses(generation, coords)
@@ -122,7 +122,7 @@ def evolutionary_loop(coords, steps, N=200, K=2, local_search=False):
         generation = generation_step(generation, coords, K)
         if local_search:
             for i in range(generation.shape[0]):
-                generation[i, :] = two_opt_search(generation[i, :])
+                generation[i, :] = two_opt_search(generation[i, :], coords)
         all_fitnesses = get_all_fitnesses(generation, coords)
         best_fitnesses[s+1] = np.max(all_fitnesses)
         mean_fitnesses[s+1] = np.mean(all_fitnesses)
@@ -148,15 +148,15 @@ def plot_solution(solution, coords):
     return fig
 
 
-def two_opt_search(path):
+def two_opt_search(path, coords):
     """Perform one step of 2-opt local search."""
-    dist = distance(path)
+    dist = fitness(path, coords)
     best_path = path
     for i in range(len(path)):
         for j in range(len(path)):
             # to keep the search local, all swapping is done on the current path, not the best path found so far
             new_path = two_opt_swap(path, i, j)
-            new_dist = distance(new_path)
+            new_dist = fitness(path, coords)
             if new_dist < dist:
                 dist = new_dist
                 best_path = new_path
@@ -172,7 +172,7 @@ def two_opt_swap(path, i, j):
 
 
 coords = read_coords(file_reader)
-best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500)
+best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500, local_search=True)
 fig = plt.figure()
 plt.plot(best_fitnesses, label="best fitness")
 plt.plot(mean_fitnesses, label="mean fitness")
