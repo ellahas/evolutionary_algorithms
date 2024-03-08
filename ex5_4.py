@@ -162,7 +162,7 @@ def two_opt_search(path, coords):
                 best_diff = dist_diff
                 swap_coords = (i, j)
     if swap_coords is not None:
-        best_path = two_opt_swap(path, i, j)
+        best_path = two_opt_swap(path, swap_coords[0], swap_coords[1])
     else:
         best_path = path
     return best_path
