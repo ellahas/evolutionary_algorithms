@@ -136,30 +136,35 @@ def best_solution(generation, coords):
     return solution
 
 
-def plot_solution(solution, coords):
-    fig = plt.figure()
+def plot_solution(solution, coords, ax, title):
     coords_path = coords[solution, :]
-    plt.scatter(coords[:, 0], coords[:, 1], label="cities")
-    plt.plot(coords_path[:, 0], coords_path[:, 1], label="path")
-    plt.title("Solution")
+    ax.scatter(coords[:, 0], coords[:, 1], label="cities")
+    ax.plot(coords_path[:, 0], coords_path[:, 1], label="path")
+    ax.set_title(title)
     plt.xlabel("x")
     plt.ylabel("y")
     plt.legend()
-    return fig
 
 
 def two_opt_search(path, coords):
     """Perform one step of 2-opt local search."""
-    dist = fitness(path, coords)
-    best_path = path
+    best_diff = 0
+    swap_coords = None
     for i in range(len(path)):
         for j in range(len(path)):
             # to keep the search local, all swapping is done on the current path, not the best path found so far
-            new_path = two_opt_swap(path, i, j)
-            new_dist = fitness(path, coords)
-            if new_dist < dist:
-                dist = new_dist
-                best_path = new_path
+            # for computational efficiency, only the difference in path length is calculated, not full fitness
+            dist_diff = ((distance(coords[path[i-1]], coords[path[i]]) 
+                          + distance(coords[path[j-1]], coords[path[j]]))
+                         - (distance(coords[path[i-1]], coords[path[j-1]]) 
+                            + distance(coords[path[i]], coords[path[j]])))
+            if dist_diff > best_diff:
+                best_diff = dist_diff
+                swap_coords = (i, j)
+    if swap_coords is not None:
+        best_path = two_opt_swap(path, i, j)
+    else:
+        best_path = path
     return best_path
 
 
@@ -169,6 +174,57 @@ def two_opt_swap(path, i, j):
     new_path[i:j] = np.flip(path[i:j])
     new_path[j:] = path[j:]
     return new_path
+
+
+def compare_algorithms(coords, K=10, steps=1500):
+    """Run EA and MA k times to compare them."""
+    ea_fitness = np.zeros((K, 2, steps+1))
+    ea_solutions = np.zeros((K, coords.shape[0]))
+    ma_fitness = np.zeros((K, 2, steps+1))
+    ma_solutions = np.zeros((K, coords.shape[0]))
+    for k in range(K):
+        ea_fitness[k, 0, :], ea_fitness[k, 1, :], ea_gen = evolutionary_loop(coords, steps)
+        ea_solutions[k, :] = best_solution(ea_gen, coords)
+        ma_fitness[k, 0, :], ma_fitness[k, 1, :], ma_gen = evolutionary_loop(coords, steps, local_search=True)
+        ma_solutions[k, :] = best_solution(ma_gen, coords)
+    return ea_fitness, ea_solutions, ma_fitness, ma_solutions
+
+
+def plot_fitness_comparisons(ea_fitness, ma_fitness):
+    fig = plt.figure()
+    plt.plot(ea_fitness[:, 0, :], alpha=0.5, color='b')
+    plt.plot(np.mean(ea_fitness[:, 0, :], axis=0), label="EA best fitness", color='b')
+    plt.plot(ea_fitness[:, 1, :], alpha=0.5, color='g')
+    plt.plot(np.mean(ea_fitness[:, 1, :], axis=0), label="EA mean fitness", color='g')
+
+    plt.plot(ma_fitness[:, 0, :], alpha=0.5, color='r')
+    plt.plot(np.mean(ma_fitness[:, 0, :], axis=0), label="MA best fitness", color='r')
+    plt.plot(ma_fitness[:, 1, :], alpha=0.5, color='o')
+    plt.plot(np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='o')
+
+    plt.title("Fitness over generations")
+    plt.xlabel("Generation")
+    plt.ylabel("Fitness")
+    plt.legend()
+    return fig
+
+
+def plot_solution_comparisons(ea_solutions, ma_solutions, coords):
+    best_ea, worst_ea = best_and_worst_solution(ea_solutions, coords)
+    best_ma, worst_ma = best_and_worst_solution(ma_solutions, coords)
+    plot_solution(best_ea, coords, plt.subplot(2, 2, 1), "Best EA solution")
+    plot_solution(worst_ea, coords, plt.subplot(2, 2, 2), "Worst EA solution")
+    plot_solution(best_ma, coords, plt.subplot(2, 2, 3), "Best MA solution")
+    plot_solution(worst_ma, coords, plt.subplot(2, 2, 4), "Worst MA solution")
+
+
+def best_and_worst_solution(solutions, coords):
+    all_fitnesses = get_all_fitnesses(solutions, coords)
+    i = np.argmax(all_fitnesses)
+    best = solutions[i, :]
+    i = np.argmin(all_fitnesses)
+    worst = solutions[i, :]
+    return best, worst
 
 
 coords = read_coords(file_reader)
