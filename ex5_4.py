@@ -108,8 +108,11 @@ def get_all_fitnesses(generation, coords):
     return all_fitnesses
 
 
-def evolutionary_loop(coords, steps, N=200, K=2):
+def evolutionary_loop(coords, steps, N=200, K=2, local_search=False):
     generation = random_population(coords.shape[0], N)
+    if local_search:
+        for i in range(generation.shape[0]):
+            generation[i, :] = two_opt_search(generation[i, :])
     best_fitnesses = np.zeros(steps+1)
     mean_fitnesses = np.zeros(steps+1)
     all_fitnesses = get_all_fitnesses(generation, coords)
@@ -117,6 +120,9 @@ def evolutionary_loop(coords, steps, N=200, K=2):
     mean_fitnesses[0] = np.mean(all_fitnesses)
     for s in tqdm(range(steps)):
         generation = generation_step(generation, coords, K)
+        if local_search:
+            for i in range(generation.shape[0]):
+                generation[i, :] = two_opt_search(generation[i, :])
         all_fitnesses = get_all_fitnesses(generation, coords)
         best_fitnesses[s+1] = np.max(all_fitnesses)
         mean_fitnesses[s+1] = np.mean(all_fitnesses)
