@@ -210,12 +210,14 @@ def plot_fitness_comparisons(ea_fitness, ma_fitness):
 
 
 def plot_solution_comparisons(ea_solutions, ma_solutions, coords):
+    fig = plt.figure()
     best_ea, worst_ea = best_and_worst_solution(ea_solutions, coords)
     best_ma, worst_ma = best_and_worst_solution(ma_solutions, coords)
     plot_solution(best_ea, coords, plt.subplot(2, 2, 1), "Best EA solution")
     plot_solution(worst_ea, coords, plt.subplot(2, 2, 2), "Worst EA solution")
     plot_solution(best_ma, coords, plt.subplot(2, 2, 3), "Best MA solution")
     plot_solution(worst_ma, coords, plt.subplot(2, 2, 4), "Worst MA solution")
+    return fig
 
 
 def best_and_worst_solution(solutions, coords):
@@ -228,18 +230,11 @@ def best_and_worst_solution(solutions, coords):
 
 
 coords = read_coords(file_reader)
-best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500, local_search=True)
-fig = plt.figure()
-plt.plot(best_fitnesses, label="best fitness")
-plt.plot(mean_fitnesses, label="mean fitness")
-plt.title("Fitness over generations")
-plt.xlabel("Generation")
-plt.ylabel("Fitness")
-plt.legend()
-plt.savefig("fitness.png")
-plt.show()
 
-solution = best_solution(generation, coords)
-fig = plot_solution(solution, coords)
-plt.savefig("solution.png")
+ea_fitness, ea_solutions, ma_fitness, ma_solutions = compare_algorithms(coords)
+fig1 = plot_fitness_comparisons(ea_fitness, ma_fitness)
+plt.savefig("fitnesses.png")
+plt.show()
+fig2 = plot_solution_comparisons(ea_solutions, ma_solutions, coords)
+plt.savefig("solutions.png")
 plt.show()
