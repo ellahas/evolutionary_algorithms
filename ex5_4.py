@@ -151,7 +151,7 @@ def two_opt_search(path, coords):
     best_diff = 0
     swap_coords = None
     for i in range(len(path)):
-        for j in range(len(path)):
+        for j in range(i+1, len(path)):
             # to keep the search local, all swapping is done on the current path, not the best path found so far
             # for computational efficiency, only the difference in path length is calculated, not full fitness
             dist_diff = ((distance(coords[path[i-1]], coords[path[i]]) 
