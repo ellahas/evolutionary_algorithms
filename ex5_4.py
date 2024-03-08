@@ -133,16 +133,24 @@ def best_solution(generation, coords):
 def plot_solution(solution, coords):
     fig = plt.figure()
     coords_path = coords[solution, :]
-    plt.scatter(coords[:, 0], coords[:, 1])
-    plt.plot(coords_path[:, 0], coords_path[:, 1])
+    plt.scatter(coords[:, 0], coords[:, 1], label="cities")
+    plt.plot(coords_path[:, 0], coords_path[:, 1], label="path")
+    plt.title("Solution")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.legend()
     return fig
 
 
 coords = read_coords(file_reader)
 best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500)
 fig = plt.figure()
-plt.plot(best_fitnesses)
-plt.plot(mean_fitnesses)
+plt.plot(best_fitnesses, label="best fitness")
+plt.plot(mean_fitnesses, label="mean fitness")
+plt.title("Fitness over generations")
+plt.xlabel("Generation")
+plt.ylabel("Fitness")
+plt.legend()
 plt.savefig("fitness.png")
 plt.show()
 
