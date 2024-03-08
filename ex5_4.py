@@ -142,6 +142,29 @@ def plot_solution(solution, coords):
     return fig
 
 
+def two_opt_search(path):
+    """Perform one step of 2-opt local search."""
+    dist = distance(path)
+    best_path = path
+    for i in range(len(path)):
+        for j in range(len(path)):
+            # to keep the search local, all swapping is done on the current path, not the best path found so far
+            new_path = two_opt_swap(path, i, j)
+            new_dist = distance(new_path)
+            if new_dist < dist:
+                dist = new_dist
+                best_path = new_path
+    return best_path
+
+
+def two_opt_swap(path, i, j):
+    new_path = np.zeros(path.shape)
+    new_path[:i] = path[:i]
+    new_path[i:j] = np.flip(path[i:j])
+    new_path[j:] = path[j:]
+    return new_path
+
+
 coords = read_coords(file_reader)
 best_fitnesses, mean_fitnesses, generation = evolutionary_loop(coords, 1500)
 fig = plt.figure()
