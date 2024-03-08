@@ -108,7 +108,7 @@ def get_all_fitnesses(generation, coords):
     return all_fitnesses
 
 
-def evolutionary_loop(coords, steps, N=50, K=2):
+def evolutionary_loop(coords, steps, N=200, K=2):
     generation = random_population(coords.shape[0], N)
     best_fitnesses = np.zeros(steps+1)
     mean_fitnesses = np.zeros(steps+1)
