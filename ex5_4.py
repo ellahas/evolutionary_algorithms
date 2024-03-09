@@ -6,8 +6,8 @@ tsp_file = "file-tsp.txt"
 file_reader = open(tsp_file, "r")
 
 
-def read_coords(file_reader):
-    """Read the coordinates of the cities given in the file."""
+def read_txt_file(file_reader):
+    """Read the coordinates of the cities given in the .txt file."""
     lines = file_reader.readlines()
     coords = np.zeros((len(lines), 2))
     for i, line in enumerate(lines):
@@ -16,6 +16,7 @@ def read_coords(file_reader):
 
 
 def read_tsp_file(file_reader):
+    """Read the coordinates of the locations given in the .tsp file"""
     line = file_reader.readline()
     coords = []
     while line != "EOF":
@@ -240,7 +241,7 @@ def best_and_worst_solution(solutions, coords):
     return best, worst
 
 
-coords = read_coords(file_reader)
+coords = read_txt_file(file_reader)
 
 ea_fitness, ea_solutions, ma_fitness, ma_solutions = compare_algorithms(coords)
 fig1 = plot_fitness_comparisons(ea_fitness, ma_fitness)
