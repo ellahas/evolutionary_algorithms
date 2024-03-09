@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-tsp_file = "file-tsp.txt"
+tsp_file = "berlin52.tsp/berlin52.tsp"
 file_reader = open(tsp_file, "r")
 
 
@@ -17,9 +17,9 @@ def read_txt_file(file_reader):
 
 def read_tsp_file(file_reader):
     """Read the coordinates of the locations given in the .tsp file"""
-    line = file_reader.readline()
+    lines = file_reader.readlines()
     coords = []
-    while line != "EOF":
+    for line in lines:
         if line[0] in "0123456789":
             n, x, y = line.split()
             coords.append([float(x), float(y)])
@@ -259,14 +259,14 @@ def best_and_worst_solution(solutions, coords):
     return best, worst
 
 
-coords = read_txt_file(file_reader)
+coords = read_tsp_file(file_reader)
 
 ea_fitness, ea_solutions, ma_fitness, ma_solutions = compare_algorithms(coords)
-np.savez("results1.npz", ea_fitness=ea_fitness, ea_solutions=ea_solutions,
+np.savez("results2.npz", ea_fitness=ea_fitness, ea_solutions=ea_solutions,
          ma_fitness=ma_fitness, ma_solutions=ma_solutions)
 fig1 = plot_fitness_comparisons(ea_fitness, ma_fitness)
-plt.savefig("fitnesses.png")
+plt.savefig("fitnesses2.png")
 plt.show()
 fig2 = plot_solution_comparisons(ea_solutions, ma_solutions, coords)
-plt.savefig("solutions.png")
+plt.savefig("solutions2.png")
 plt.show()
