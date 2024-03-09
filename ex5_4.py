@@ -15,6 +15,17 @@ def read_coords(file_reader):
     return coords
 
 
+def read_tsp_file(file_reader):
+    line = file_reader.readline()
+    coords = []
+    while line != "EOF":
+        if line[0] in "0123456789":
+            n, x, y = line.split()
+            coords.append([float(x), float(y)])
+        line = file_reader.readline()
+    return np.array(coords)
+
+
 def distance(coords1, coords2):
     """Calculate the euclidean distance between two coordinate pairs."""
     return np.sqrt((coords1[0] - coords2[0])**2 + (coords1[1] - coords2[1])**2)
