@@ -114,6 +114,7 @@ def random_population(n_cities, N):
 
 
 def get_all_fitnesses(generation, coords):
+    """Compute the fitness for each individual in a generation"""
     all_fitnesses = np.zeros(len(generation))
     for i in range(len(generation)):
         all_fitnesses[i] = fitness(generation[i, :], coords)
@@ -121,6 +122,13 @@ def get_all_fitnesses(generation, coords):
 
 
 def evolutionary_loop(coords, steps, N=50, K=2, local_search=False):
+    """ Instantiate a first generation and run the evolutionary loop.
+    coords: the coordinates of the cities
+    steps: amount of iterations the loop is run for
+    N: the size of each generation
+    K: the size of the selection tournament
+    local_search: whether to perform local 2-opt search on each generation (False if EA, True if MA)
+    """
     generation = random_population(coords.shape[0], N)
     if local_search:
         for i in range(generation.shape[0]):
@@ -142,13 +150,16 @@ def evolutionary_loop(coords, steps, N=50, K=2, local_search=False):
 
 
 def best_solution(generation, coords):
+    """Returns the individual of a generation with the highest fitness"""
     all_fitnesses = get_all_fitnesses(generation, coords)
     i = np.argmax(all_fitnesses)
     solution = generation[i, :]
     return solution
 
 
-def plot_solution(solution, coords, ax, title):
+def plot_solution(solution, coords, ax, title=""):
+    """Plots a solution using the city coordinates and the order of the path.
+    Requires a plot axis to be passed"""
     coords_path = coords[solution, :]
     ax.scatter(coords[:, 0], coords[:, 1], label="cities")
     ax.plot(coords_path[:, 0], coords_path[:, 1], label="path")
@@ -181,6 +192,8 @@ def two_opt_search(path, coords):
 
 
 def two_opt_swap(path, i, j):
+    """Swap the path between two cities in its entirety,
+    while keeping the rest of the path the same"""
     new_path = np.zeros(path.shape)
     new_path[:i] = path[:i]
     new_path[i:j] = np.flip(path[i:j])
@@ -203,6 +216,7 @@ def compare_algorithms(coords, K=10, steps=1500):
 
 
 def plot_fitness_comparisons(ea_fitness, ma_fitness):
+    """Plot the mean and best fitness for each run (and their means over all runs) of EA and MA"""
     fig = plt.figure()
     plt.plot(ea_fitness[:, 0, :], alpha=0.5, color='b')
     plt.plot(np.mean(ea_fitness[:, 0, :], axis=0), label="EA best fitness", color='b')
@@ -222,6 +236,7 @@ def plot_fitness_comparisons(ea_fitness, ma_fitness):
 
 
 def plot_solution_comparisons(ea_solutions, ma_solutions, coords):
+    """Plot the best and worst solutions found by EA and MA"""
     fig = plt.figure()
     best_ea, worst_ea = best_and_worst_solution(ea_solutions, coords)
     best_ma, worst_ma = best_and_worst_solution(ma_solutions, coords)
@@ -233,6 +248,7 @@ def plot_solution_comparisons(ea_solutions, ma_solutions, coords):
 
 
 def best_and_worst_solution(solutions, coords):
+    """Find the best and the worst of the top solutions across runs"""
     all_fitnesses = get_all_fitnesses(solutions, coords)
     i = np.argmax(all_fitnesses)
     best = solutions[i, :]
