@@ -36,7 +36,7 @@ def fitness(path, coords):
     """Determine the fitness of a path based on the total distance travelled."""
     total_distance = 0
     for i in range(len(path)-1):
-        total_distance += distance(coords[path[i], :], coords[path[i+1], :])
+        total_distance += distance(coords[int(path[i]), :], coords[int(path[i+1]), :])
     return 1 / total_distance
 
 
@@ -138,7 +138,7 @@ def evolutionary_loop(coords, steps, N=50, K=2, local_search=False):
     all_fitnesses = get_all_fitnesses(generation, coords)
     best_fitnesses[0] = np.max(all_fitnesses)
     mean_fitnesses[0] = np.mean(all_fitnesses)
-    for s in tqdm(range(steps)):
+    for s in range(steps):
         generation = generation_step(generation, coords, K)
         if local_search:
             for i in range(generation.shape[0]):
@@ -160,6 +160,7 @@ def best_solution(generation, coords):
 def plot_solution(solution, coords, ax, title=""):
     """Plots a solution using the city coordinates and the order of the path.
     Requires a plot axis to be passed"""
+    solution = np.array(solution, int)
     coords_path = coords[solution, :]
     ax.scatter(coords[:, 0], coords[:, 1], label="cities")
     ax.plot(coords_path[:, 0], coords_path[:, 1], label="path")
@@ -244,6 +245,7 @@ def plot_solution_comparisons(ea_solutions, ma_solutions, coords):
     plot_solution(worst_ea, coords, plt.subplot(2, 2, 2), "Worst EA solution")
     plot_solution(best_ma, coords, plt.subplot(2, 2, 3), "Best MA solution")
     plot_solution(worst_ma, coords, plt.subplot(2, 2, 4), "Worst MA solution")
+    plt.tight_layout()
     return fig
 
 
@@ -260,6 +262,8 @@ def best_and_worst_solution(solutions, coords):
 coords = read_txt_file(file_reader)
 
 ea_fitness, ea_solutions, ma_fitness, ma_solutions = compare_algorithms(coords)
+np.savez("results1.npz", ea_fitness=ea_fitness, ea_solutions=ea_solutions,
+         ma_fitness=ma_fitness, ma_solutions=ma_solutions)
 fig1 = plot_fitness_comparisons(ea_fitness, ma_fitness)
 plt.savefig("fitnesses.png")
 plt.show()
