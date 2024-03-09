@@ -16,7 +16,7 @@ def read_coords(file_reader):
 
 
 def distance(coords1, coords2):
-    """Calculate the eulerian distance between two coordinate pairs."""
+    """Calculate the euclidean distance between two coordinate pairs."""
     return np.sqrt((coords1[0] - coords2[0])**2 + (coords1[1] - coords2[1])**2)
 
 
@@ -182,7 +182,7 @@ def compare_algorithms(coords, K=10, steps=1500):
     ea_solutions = np.zeros((K, coords.shape[0]))
     ma_fitness = np.zeros((K, 2, steps+1))
     ma_solutions = np.zeros((K, coords.shape[0]))
-    for k in range(K):
+    for k in tqdm(range(K)):
         ea_fitness[k, 0, :], ea_fitness[k, 1, :], ea_gen = evolutionary_loop(coords, steps)
         ea_solutions[k, :] = best_solution(ea_gen, coords)
         ma_fitness[k, 0, :], ma_fitness[k, 1, :], ma_gen = evolutionary_loop(coords, steps, local_search=True)
@@ -199,8 +199,8 @@ def plot_fitness_comparisons(ea_fitness, ma_fitness):
 
     plt.plot(ma_fitness[:, 0, :], alpha=0.5, color='r')
     plt.plot(np.mean(ma_fitness[:, 0, :], axis=0), label="MA best fitness", color='r')
-    plt.plot(ma_fitness[:, 1, :], alpha=0.5, color='o')
-    plt.plot(np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='o')
+    plt.plot(ma_fitness[:, 1, :], alpha=0.5, color='orange')
+    plt.plot(np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='orange')
 
     plt.title("Fitness over generations")
     plt.xlabel("Generation")
