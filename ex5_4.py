@@ -219,15 +219,16 @@ def compare_algorithms(coords, K=10, steps=1500):
 def plot_fitness_comparisons(ea_fitness, ma_fitness):
     """Plot the mean and best fitness for each run (and their means over all runs) of EA and MA"""
     fig = plt.figure()
-    plt.plot(ea_fitness[:, 0, :], alpha=0.5, color='b')
-    plt.plot(np.mean(ea_fitness[:, 0, :], axis=0), label="EA best fitness", color='b')
-    plt.plot(ea_fitness[:, 1, :], alpha=0.5, color='g')
-    plt.plot(np.mean(ea_fitness[:, 1, :], axis=0), label="EA mean fitness", color='g')
+    iterations = range(ea_fitness.shape[2])
+    plt.plot(iterations, ea_fitness[:, 0, :].T, alpha=0.5, color='b')
+    plt.plot(iterations, np.mean(ea_fitness[:, 0, :], axis=0), label="EA best fitness", color='b')
+    plt.plot(iterations, ea_fitness[:, 1, :].T, alpha=0.5, color='g')
+    plt.plot(iterations, np.mean(ea_fitness[:, 1, :], axis=0), label="EA mean fitness", color='g')
 
-    plt.plot(ma_fitness[:, 0, :], alpha=0.5, color='r')
-    plt.plot(np.mean(ma_fitness[:, 0, :], axis=0), label="MA best fitness", color='r')
-    plt.plot(ma_fitness[:, 1, :], alpha=0.5, color='orange')
-    plt.plot(np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='orange')
+    plt.plot(iterations, ma_fitness[:, 0, :].T, alpha=0.5, color='r')
+    plt.plot(iterations, np.mean(ma_fitness[:, 0, :], axis=0), label="MA best fitness", color='r')
+    plt.plot(iterations, ma_fitness[:, 1, :].T, alpha=0.5, color='orange')
+    plt.plot(iterations, np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='orange')
 
     plt.title("Fitness over generations")
     plt.xlabel("Generation")
@@ -264,6 +265,13 @@ coords = read_tsp_file(file_reader)
 ea_fitness, ea_solutions, ma_fitness, ma_solutions = compare_algorithms(coords)
 np.savez("results2.npz", ea_fitness=ea_fitness, ea_solutions=ea_solutions,
          ma_fitness=ma_fitness, ma_solutions=ma_solutions)
+""" Load results:
+results = np.load("results1.npz")
+ea_fitness = results["ea_fitness"]
+ea_solutions = results["ea_solutions"]
+ma_fitness = results["ma_fitness"]
+ma_solutions = results["ma_solutions"]
+"""
 fig1 = plot_fitness_comparisons(ea_fitness, ma_fitness)
 plt.savefig("fitnesses2.png")
 plt.show()
