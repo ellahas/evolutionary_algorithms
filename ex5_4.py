@@ -220,14 +220,14 @@ def plot_fitness_comparisons(ea_fitness, ma_fitness):
     """Plot the mean and best fitness for each run (and their means over all runs) of EA and MA"""
     fig = plt.figure()
     iterations = range(ea_fitness.shape[2])
-    plt.plot(iterations, ea_fitness[:, 0, :].T, alpha=0.5, color='b')
+    plt.plot(iterations, ea_fitness[:, 0, :].T, alpha=0.2, color='b')
     plt.plot(iterations, np.mean(ea_fitness[:, 0, :], axis=0), label="EA best fitness", color='b')
-    plt.plot(iterations, ea_fitness[:, 1, :].T, alpha=0.5, color='g')
+    plt.plot(iterations, ea_fitness[:, 1, :].T, alpha=0.2, color='g')
     plt.plot(iterations, np.mean(ea_fitness[:, 1, :], axis=0), label="EA mean fitness", color='g')
 
-    plt.plot(iterations, ma_fitness[:, 0, :].T, alpha=0.5, color='r')
+    plt.plot(iterations, ma_fitness[:, 0, :].T, alpha=0.2, color='r')
     plt.plot(iterations, np.mean(ma_fitness[:, 0, :], axis=0), label="MA best fitness", color='r')
-    plt.plot(iterations, ma_fitness[:, 1, :].T, alpha=0.5, color='orange')
+    plt.plot(iterations, ma_fitness[:, 1, :].T, alpha=0.2, color='orange')
     plt.plot(iterations, np.mean(ma_fitness[:, 1, :], axis=0), label="MA mean fitness", color='orange')
 
     plt.title("Fitness over generations")
