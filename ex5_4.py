@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-tsp_file = "berlin52.tsp/berlin52.tsp"
+tsp_file = "tsp-files/berlin52.tsp"
 file_reader = open(tsp_file, "r")
 
 
